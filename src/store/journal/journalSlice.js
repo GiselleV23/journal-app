@@ -3,7 +3,8 @@ export const journalSlice = createSlice({ //este journalSlice lo debemos poner e
    name: 'journal',
    initialState: {
       isSaving: false, //neceisto como stado inicial una bandera buelana para saber si estoy salvando o no 
-      messageSaved: "", //estado donde el msj ya esta guardado
+      messageSaved: "", /*estado donde el msj ya esta guardado, es decir cuando demos guardar la nota y esta se guarde
+      vamos a poner el msj aqui y cuando estamos haciendo una nueva nota este msj lo limpiamos*/
       notes: [], //nuestras notas ya guardadas estaran en un objeto que sera un arreglo 
       active: null, //estado que se vera si la nota esta activa y contendra las propiedas de cada nota
    },
@@ -32,6 +33,8 @@ export const journalSlice = createSlice({ //este journalSlice lo debemos poner e
             state.active = action.payload/*estamos diciendo que la propiedad active es igual a la action.payload
             es decir a mi note diciendo que mi setActiveNote su action es la nota que quiero establecer en pantalla 
             es decir mi newNote y la mando a llamar y hago el dispatch en mi thunks */
+
+            state.messageSaved =""; //estoy cambiando la nota activa por eso limpiamos el msj
       },
 
       setNotes: (state, action) => { //action para cargar las notas, cuando ya las tenemos leidas desde algun lugar
@@ -45,6 +48,8 @@ export const journalSlice = createSlice({ //este journalSlice lo debemos poner e
          guardamos la nota en firebase */
          state.isSaving = true;
          //falta TODO msj de error
+
+         state.messageSaved =""; /*limpiamos el valor del msj mientras la nota esta cargada pero no guardada*/
         
       },
 
@@ -65,6 +70,9 @@ export const journalSlice = createSlice({ //este journalSlice lo debemos poner e
          });
 
          //todo msj de actualizacion
+         state.messageSaved = `${action.payload.tittle}, actualizada correctamente` /*con un efecto vamos a poder
+         estar pendientes de este msj y cuando este cambie el messageSaved cambien a mi texto actualizada correc-
+         tamente podemos disparar el sweetAlert2 */
       },
 
       deleteNoteById: (state, action) => { //eliminar de nuestro listado las notas 

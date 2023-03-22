@@ -151,5 +151,11 @@ export const startSaveNote = () => { //funcion asincrona para guardar la nota qu
         mi noteFirestore ya que esa nota no tiene id si mandaramos esa nota y no la que hicimos en nuestro upDateNote 
         tendriamos que agregar el id*/
 
+        /*en este punto ya logramos que lo que haciamos en la nota activa se actuaizara en la notas de mi sideBar */
+
+        /*ahora lo que vamos a hacer es mostrar un msj que cuando yo de click en mi botnon de guardar aparezca el 
+        msj diciendo que se grabo satidfactotiamente , tambien debemos deshabilitar el boton cuando estemos guardando 
+        la nota */
+
     }
 }

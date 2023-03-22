@@ -6,6 +6,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useMemo } from "react";
 import { setActiveNote } from "../../store/journal/journalSlice";
 import { startSaveNote } from "../../store/journal/thunks";
+import Swal from "sweetalert2";
+import "sweetalert2/dist/sweetalert2.css";
 
 export const NoteView = () => {
   const dispatch = useDispatch();
@@ -16,7 +18,11 @@ export const NoteView = () => {
   formulario que tenemos en este cascaron y para ese manejo usaremos nuestro customHook useForm y como estado inicual
   de este formulario vamos a tomar la nota activa*/
 
-  const { active: note } = useSelector(
+  const {
+    active: note,
+    messageSaved,
+    isSaving,
+  } = useSelector(
     (state) => state.journal
   ); /*con la sintaxis active:note estamos indicando que 
   ahora el active sera note */
@@ -54,6 +60,13 @@ export const NoteView = () => {
   /*ahora sigue el tema de guardar mi nota en firebase que al ser asincrona lo haremos con un thunk y realizaremos
   el manejo del boton que se encuentra aqui de guardar*/
 
+  useEffect(() => {
+    //efecto para manejo de la nota guardada correctamente
+    if (messageSaved.length > 0) {
+      Swal.fire("Nota actualizada", messageSaved, "success");
+    }
+  }, [messageSaved]);
+
   const onSaveNote = () => {
     dispatch(startSaveNote());
   };
@@ -74,7 +87,12 @@ export const NoteView = () => {
       </Grid>
 
       <Grid item>
-        <Button color="primary" sx={{ padding: 2 }} onClick={onSaveNote}>
+        <Button
+          color="primary"
+          sx={{ padding: 2 }}
+          onClick={onSaveNote}
+          disabled={isSaving}
+        >
           <SaveOutlined sx={{ fontSize: 30, mr: 1 }} />
           Guardar
         </Button>
