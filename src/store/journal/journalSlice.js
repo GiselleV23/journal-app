@@ -75,6 +75,34 @@ export const journalSlice = createSlice({ //este journalSlice lo debemos poner e
          tamente podemos disparar el sweetAlert2 */
       },
 
+      /*Ahora lo que vamos a hacer es trabajar con nuestras images de nuestra app para las cuales usaremos
+      cloudinary el cual la cual con su bibliotea de medios emplea apis restful y sdk para automatizar imagenes
+      y tambien usaremos postman para hacer la peticion a cloudinary nusyras magenes necesitan un backend que 
+      tenga un url ose un api que este esperando esas imagenes y aqui es donde usaremos clodinary
+      
+      vsmos a necesitar hacer un selector de imagenes que nos permita tomar la imagen que queramos y mandarla a cloudinary
+      entonces vamos a tomar las imagenes, seleccionarlas, cargarlas, mandarlas a llamar, crear el frontdata y subirlo
+      etc
+      
+      buscamos con esto que nuestra app le permita a nuestro usuario seleccionar imagines propias de su galeria en el 
+      pc y agregarlas a la nota con la que se relaciona dicha imagen, esto lo haremos en mi componente NoteView*/
+
+
+      /*ahora vamos a subir nuestras imagenes a cloudinary , como para esto voy a necesitar hacer una peticion http
+      es decir algo asincrono debo de hacer un thunk el cual se llamara startUploadingFiles */
+
+      setPhotosToActiveNote: (state, action) => {
+
+         state.active.imageUrls = [...state.active.imageUrls, ...action.payload]; /*aqui lo que estamos haciendo es
+         crear una nueva propiedad a mi active que es el imageUrls y esta sera igual un arreglo que con el operador
+         expres le indico que tome todas las imagenes anteriores y le concateno el action.payload que vendria siendo
+         las imagenes nuevas asi tendriamos un arreglo con las imagenes viejas y con las nuevas  llamamos neustro
+         setPhotosToActiveNote en el thunk */
+
+         state.isSaving = false;
+
+      },
+
       deleteNoteById: (state, action) => { //eliminar de nuestro listado las notas 
 
       }
@@ -89,4 +117,5 @@ export const {
     setNotes,
     setSaving,
     upDateNote,
+    setPhotosToActiveNote,
     deleteNoteById } = journalSlice.actions; //debo exportar mis acciones para usarlas en otras partes de mi app

@@ -1,13 +1,14 @@
-import { SaveOutlined } from "@mui/icons-material";
-import { Grid, Typography, Button, TextField } from "@mui/material";
+import { SaveOutlined, UploadOutlined } from "@mui/icons-material";
+import { Grid, Typography, Button, TextField, IconButton } from "@mui/material";
 import { ImageGallery } from "../components";
 import { useForm } from "../../hooks/useForm";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useMemo } from "react";
 import { setActiveNote } from "../../store/journal/journalSlice";
-import { startSaveNote } from "../../store/journal/thunks";
+import { startSaveNote, startUploadingFiles } from "../../store/journal/thunks";
 import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.css";
+import { useRef } from "react";
 
 export const NoteView = () => {
   const dispatch = useDispatch();
@@ -51,6 +52,12 @@ export const NoteView = () => {
   /*Ahora vamos a hacer que cuando yo realice cambios en mi nota tambien estos cambios se reflejen en mi nota activa
   y para esto vamos a usar un useEffect */
 
+  /*uso de useRef para hacer que mi elemento input que puse en displat: "none" se vea cuando yo quiero que se vea 
+  este useRef va a mantener la referencia a nuestro html especificamente a nuesro input por eso lo vincularemos
+  directamente al input antes nombrado, con este fileInputRef yo puedo simular el onclick auque mi elemento
+  input no se vea por mi display none*/
+  const fileInputRef = useRef();
+
   useEffect(() => {
     dispatch(setActiveNote(formState));
     /*al mandarle a mi setActiveNote mi formState el cual tiene todas las propiedades
@@ -71,6 +78,12 @@ export const NoteView = () => {
     dispatch(startSaveNote());
   };
 
+  /*funcion del manejo del input type="file" que le permitira a mi usuario seleccionar sus imagenes*/
+  const onFileInputChange = ({ target }) => {
+    if (target.files === 0) return;
+    dispatch(startUploadingFiles(target.files));
+  };
+
   return (
     <Grid
       className="animate__animated animate__fadeIn animate__fater" /*use de la libreria animated.style*/
@@ -85,6 +98,22 @@ export const NoteView = () => {
           {dateString}
         </Typography>
       </Grid>
+
+      <input
+        type="file"
+        multiple
+        onChange={onFileInputChange}
+        style={{ display: "none" }}
+        ref={fileInputRef}
+      />
+
+      <IconButton
+        color="primary"
+        disabled={isSaving}
+        onClick={() => fileInputRef.current.click()}
+      >
+        <UploadOutlined />
+      </IconButton>
 
       <Grid item>
         <Button
@@ -125,7 +154,7 @@ export const NoteView = () => {
       </Grid>
 
       {/*aqui pondriamos una galaeria de imagenes*/}
-      <ImageGallery />
+      <ImageGallery images={note.imageUrls} />
     </Grid>
   );
 };

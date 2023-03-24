@@ -4,9 +4,8 @@ tareas asincronas*/
 
 import { collection, doc, setDoc } from "firebase/firestore/lite";
 import { FirebaseDB } from "../../firebase/config";
-import { loadNotes } from "../../helpers";
-import { addNewEmptyNote, savingNewNote, setActiveNote, setNotes, setSaving, upDateNote } from "./journalSlice";
-
+import { fileUpload, loadNotes } from "../../helpers";
+import { addNewEmptyNote, savingNewNote, setActiveNote, setNotes, setPhotosToActiveNote, setSaving, upDateNote } from "./journalSlice";
 
 export const startNewNote = () => { /*esta accion la despachamos cuando demos click en el boton + por lo cual esta 
 funcion startNewNote la llamaremos o despacharemos  en el componente que tiene el boton + que es el journalPage*/
@@ -158,4 +157,38 @@ export const startSaveNote = () => { //funcion asincrona para guardar la nota qu
         la nota */
 
     }
-}
+};
+
+export const startUploadingFiles = (files=[]) => { //recibe como argumento archivos
+    return async(dispatch) => {
+        /*cuando comienzo a cargar debo hacer el dispatch de setSaving con la intecion de que me bloqueo botones 
+        mientras carga y pondra la app en un estado de carga*/
+        dispatch(setSaving());
+
+        //console.log(files); verificar si estamos recibiendo dichos files
+
+        //await fileUpload(files[0]);
+
+        //Subir las imagenes en secuencia a cloudinary .
+        const fileUploadPromises = [];
+        for(const file of files){//aqui lo que haremos sera creaar un arreglo de todas la promesas a dispara
+
+            fileUploadPromises.push(fileUpload(file));//insertamos con el push el arhivo que estoy iterando
+
+        }
+
+        //ahora para disparar dicho arreglo de promesas hago lo sig:
+        const photosUrls = await Promise.all(fileUploadPromises); /*este all espera un arreglo de callbacks o en este 
+        caso de promesas*/
+
+        //console.log(photosUrls);
+
+        /*ahora debemos establecer nuestro arreglo de imagenes guardadas en mi variable photoUrls en la nota activa
+        ya que la nota activa es la que se va a guardar en nuestro firebase */
+
+        //dispatch de mi action de mi slice setPhotosToActiveNote
+        dispatch(setPhotosToActiveNote(photosUrls));
+
+    }
+
+} 
