@@ -1,7 +1,7 @@
 import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";
 
-export const ImageGallery = ({ images }) => {
+export const ImageGallery = ({ images = [] }) => {
   //recibo las imagenes que estoy mandando como propiedad en NoteView
   return (
     <ImageList sx={{ width: "100%", height: 500 }} cols={4} rowHeight={160}>

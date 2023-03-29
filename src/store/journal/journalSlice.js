@@ -100,11 +100,28 @@ export const journalSlice = createSlice({ //este journalSlice lo debemos poner e
          setPhotosToActiveNote en el thunk */
 
          state.isSaving = false;
+      },
 
+      /*ahora ya habiendo terminado el tema de las imagenes debemos de limpiar nuestras notas para que cuando nos 
+      salgamos de nuestra app e ingrese un nuevo usuario no le apareacan al nuevo usuario lo que hizo el viejo 
+      este clearNotesLogout lo vamos a mandar a llamar en el thunk startLogout de mis thunks de la carpeta auth 
+      que contiene todo lo de autenicacion*/
+      clearNotesLogout: (state) => {
+
+         state.isSaving = false;
+         state.messageSaved = "";
+         state.notes = [];
+         state.active = null;
       },
 
       deleteNoteById: (state, action) => { //eliminar de nuestro listado las notas 
 
+         state.active = null; //la nota activa existira cuando se de click en borrar
+         state.notes = state.notes.filter(note => note.id !== action.payload);/*y aqui lo que estamos haciendo es 
+         diciendo al state.notes.id que filtre las notas de dicho arreglo de la sig manera: que si la nota con ese id 
+         donde dimos click en borrar es diferente al action.payload entonces me regrese todas las notas, por lo
+         tanro tendriamos todas las notas menos a la que se le dio click al boton de borrar */
+      
       }
 
    }
@@ -118,4 +135,5 @@ export const {
     setSaving,
     upDateNote,
     setPhotosToActiveNote,
+    clearNotesLogout,
     deleteNoteById } = journalSlice.actions; //debo exportar mis acciones para usarlas en otras partes de mi app

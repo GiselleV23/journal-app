@@ -1,11 +1,19 @@
-import { SaveOutlined, UploadOutlined } from "@mui/icons-material";
+import {
+  DeleteOutline,
+  SaveOutlined,
+  UploadOutlined,
+} from "@mui/icons-material";
 import { Grid, Typography, Button, TextField, IconButton } from "@mui/material";
 import { ImageGallery } from "../components";
 import { useForm } from "../../hooks/useForm";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useMemo } from "react";
 import { setActiveNote } from "../../store/journal/journalSlice";
-import { startSaveNote, startUploadingFiles } from "../../store/journal/thunks";
+import {
+  startSaveNote,
+  startUploadingFiles,
+  startDeletingNote,
+} from "../../store/journal/thunks";
 import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.css";
 import { useRef } from "react";
@@ -84,6 +92,12 @@ export const NoteView = () => {
     dispatch(startUploadingFiles(target.files));
   };
 
+  const onDelete = () => {
+    //funcion para borrar not
+
+    dispatch(startDeletingNote()); // La funcion onDelete despacha la accion startDeletingNote() de mi thunks/journal
+  };
+
   return (
     <Grid
       className="animate__animated animate__fadeIn animate__fater" /*use de la libreria animated.style*/
@@ -151,6 +165,13 @@ export const NoteView = () => {
           value={body}
           onChange={onInputChange}
         />
+      </Grid>
+
+      <Grid container justifyContent="end">
+        <Button onClick={onDelete} sx={{ mt: 2 }} color="error">
+          <DeleteOutline />
+          Borrar
+        </Button>
       </Grid>
 
       {/*aqui pondriamos una galaeria de imagenes*/}

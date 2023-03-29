@@ -1,5 +1,6 @@
 
 import { loginWithEmailAndPassword, logoutFirebase, registerUserWithEmailPassword, singInWithGoogle } from "../../firebase/providers";
+import { clearNotesLogout } from "../journal/journalSlice";
 import { checkingCredentials, login, logout } from "./authSlice";
 
 export const checkingAuthentication = (email,Password) => { //dispara mi accion asincrona 
@@ -93,6 +94,8 @@ usarlo en mi funcion onLogout que relacionamos con nuestro boton de salir*/
     return async(dispatch) => { //vamos a despechar la accion que creamos en mi provider
 
         await logoutFirebase(); //llamamos mi funcion de mi provider
+
+        dispatch(clearNotesLogout()); 
 
         dispatch(logout());
     }

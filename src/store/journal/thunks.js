@@ -2,10 +2,10 @@
 que salir de mi app llegar a firebase y luego regresar a mi app por eso lo hago en mis thunks que es donde despacho
 tareas asincronas*/
 
-import { collection, doc, setDoc } from "firebase/firestore/lite";
+import { collection, deleteDoc, doc, setDoc } from "firebase/firestore/lite";
 import { FirebaseDB } from "../../firebase/config";
 import { fileUpload, loadNotes } from "../../helpers";
-import { addNewEmptyNote, savingNewNote, setActiveNote, setNotes, setPhotosToActiveNote, setSaving, upDateNote } from "./journalSlice";
+import { addNewEmptyNote, deleteNoteById, savingNewNote, setActiveNote, setNotes, setPhotosToActiveNote, setSaving, upDateNote } from "./journalSlice";
 
 export const startNewNote = () => { /*esta accion la despachamos cuando demos click en el boton + por lo cual esta 
 funcion startNewNote la llamaremos o despacharemos  en el componente que tiene el boton + que es el journalPage*/
@@ -191,4 +191,39 @@ export const startUploadingFiles = (files=[]) => { //recibe como argumento archi
 
     }
 
-} 
+};
+
+export const startDeletingNote = () => { //lo llamamos en mi NoteView
+    return async(dispatch, getState) => {
+
+        // 1: tomamos del state lo que necesitamos para borrar la nota
+        const {uid} = getState().auth;
+        const {active: note} = getState().journal;
+
+        //console.log(uid, note);//ver si estamos tomando correctamento lo que necesitamos para poder delete la nota
+
+
+        /*2: ahora ya teniendo lo que necesitamos para borrar la nota necesitamos hacer la referencia al documento
+        de firebase para eliminar la nota con dicho id para eso debremos contruir el url que nos da firebase en nuestro
+        cloud firestore donde tenemos nuestras notas */
+
+        const docRef = doc(FirebaseDB, `${uid}/journal/notes/${note.id}`) /*usamos el doc que es una funcion de firebase
+        que me pide como primer argumeto la instancia a la base de datos la cual me la proporciona el mismo firebase con 
+        el FirebaseDB y luego como segundo argumento el path como un string o los segmentos como un arreglo de strings
+        el profe prefiere hacerlo con backticks y concatenar el uis del usuario que da firebase y la nota con el id */
+
+        /* 3: ahora para eliminar dicha nota de firebase haremos lo sig usuando una funcion de firebase que se llama 
+        deleteDoc y me pide como argumento la referencia del documento a eliminar que vendria siendo lo que guardamos 
+        en la variable docRef */
+        await deleteDoc(docRef); //esta respesta no regresa nada simplemente si se hace bien se borra y si no pues no 
+
+        /* 4: una ves se borra la nota en firebase tenemos que limpiar mi store s decir eliminar mi nota de manera local
+         y para eso despachamos nuestra nuestro deleteNoteById que esta en nuestrlo slice / journal*/
+         dispatch(deleteNoteById(note.id)); /*aqui si recibe parametro ya que necesita borrar la nota activa y borrar 
+         tambien el arreglo de notas que se encuentra en mi sideBar.tambien al eliminar la nota debemos eliminar las 
+         imagenes de dicha nota en cloudinary, pero la eliminacion de las imagenes no las haremos aqui , las ahremos 
+         con el backen directamente desde cloudinary*/
+
+        
+    }
+}
